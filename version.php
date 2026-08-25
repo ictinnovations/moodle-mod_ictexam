@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_ictexam';
-$plugin->version   = 2026082500;
+$plugin->version   = 2026082501;
 $plugin->requires  = 2022112800;   // Moodle 4.1+.
 $plugin->supported = [401, 405];   // Moodle 4.1 to 4.5; widen only after testing on 5.x.
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = '0.2.0';
+$plugin->release   = '0.2.1';

@@ -3,6 +3,13 @@
 All notable changes to `mod_ictexam` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-08-25
+
+### Fixed
+- Language strings reordered alphabetically and the redundant `MOODLE_INTERNAL`
+  guard dropped from `lib.php`, clearing the 11 `moodle-plugin-ci phpcs` warnings
+  that the plugins directory review also reports.
+
 ## [0.2.0] - 2026-08-25
 
 Release preparation for the Moodle plugins directory.
