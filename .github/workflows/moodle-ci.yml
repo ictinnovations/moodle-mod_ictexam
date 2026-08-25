@@ -1,0 +1,68 @@
+name: Moodle plugin CI
+
+# The checks the plugins directory runs on submission: code style, PHPDoc, Mustache,
+# Grunt, PHPUnit and Behat against the Moodle versions version.php claims to support.
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: 'postgres'
+          POSTGRES_HOST_AUTH_METHOD: 'trust'
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 3
+        ports:
+          - 5432:5432
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.0'
+            moodle-branch: 'MOODLE_401_STABLE'
+          - php: '8.1'
+            moodle-branch: 'MOODLE_403_STABLE'
+          - php: '8.2'
+            moodle-branch: 'MOODLE_405_STABLE'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pgsql, zip, gd, xmlrpc, soap
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Initialise moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+          echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
+          sudo locale-gen en_AU.UTF-8
+          echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
+      - name: Install Moodle
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        env:
+          DB: pgsql
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+
+      - run: moodle-plugin-ci phplint
+      - run: moodle-plugin-ci phpmd
+      - run: moodle-plugin-ci phpcs --max-warnings 0
+      - run: moodle-plugin-ci validate
+      - run: moodle-plugin-ci savepoints
+      - run: moodle-plugin-ci mustache
+      - run: moodle-plugin-ci grunt --max-lint-warnings 0
+      - run: moodle-plugin-ci phpunit
+      - run: moodle-plugin-ci behat --profile chrome
