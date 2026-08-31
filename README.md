@@ -64,3 +64,7 @@ having both produces a duplicate grade column.
 GNU GPL v3 or later — see [LICENSE](LICENSE).
 
 Copyright 2026 ICT Innovations.
+
+Project website
+
+ICTExam https://www.ictlms.net
