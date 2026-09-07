@@ -68,3 +68,8 @@ Copyright 2026 ICT Innovations.
 Project website
 
 ICTExam https://www.ictlms.net
+
+
+## Links
+
+**Developed by** [ICT Innovations](https://www.ictinnovations.com), the company behind [ICT Exam](https://www.ictlms.net). More of our open source work is listed at https://ictinnovations.com/projects/.
